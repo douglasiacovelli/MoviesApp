@@ -10,7 +10,7 @@ class FetchConfiguration(
         private val saveConfiguration: SaveConfiguration = SaveConfiguration(contract.getContext())
 ) {
     fun execute(): Single<SimpleConfiguration> {
-        return MoviesRetrofit().instance.create(ConfigurationService::class.java)
+        return MoviesRetrofit.instance.create(ConfigurationService::class.java)
                 .getConfiguration()
                 .map {
                     val baseUrl = it.images.secureBaseUrl

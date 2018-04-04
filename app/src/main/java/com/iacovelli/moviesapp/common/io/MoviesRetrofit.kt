@@ -7,12 +7,12 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MoviesRetrofit {
-    private val BASE_URL: String = "https://api.themoviedb.org/3/"
+object MoviesRetrofit {
+    var BASE_URL: String = "https://api.themoviedb.org/3/"
 
     val instance: Retrofit
-        get() {
-            return Retrofit.Builder()
+        by lazy {
+            Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(GsonConverter.instance))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -22,7 +22,7 @@ class MoviesRetrofit {
 
 
     private val okHttpClient: OkHttpClient
-        get() {
+        by lazy {
             val logging = HttpLoggingInterceptor()
             val apiKey = ApiKeyInterceptor()
             if (BuildConfig.DEBUG) {
@@ -31,7 +31,7 @@ class MoviesRetrofit {
                 logging.level = HttpLoggingInterceptor.Level.NONE
             }
 
-            return OkHttpClient.Builder()
+            OkHttpClient.Builder()
                     .addInterceptor(apiKey)
                     .addInterceptor(logging)
                     .build()
