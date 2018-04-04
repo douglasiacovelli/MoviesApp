@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:background="@drawable/backdrop_placeholder"
-            app:imageUrl="@{presenter.backdropUrl}"/>
+            app:backdropImage="@{presenter.backdropUrl}"/>
 
         <View
             android:layout_width="match_parent"

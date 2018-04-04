@@ -3,6 +3,7 @@ package com.iacovelli.moviesapp.common
 import android.databinding.BaseObservable
 import android.util.Log
 import com.iacovelli.moviesapp.common.configuration.GetCachedConfiguration
+import com.iacovelli.moviesapp.common.ui.LoadingPresenter
 import com.iacovelli.moviesapp.models.SimpleConfiguration
 import io.reactivex.disposables.CompositeDisposable
 

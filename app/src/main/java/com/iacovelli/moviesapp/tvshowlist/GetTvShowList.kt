@@ -1,6 +1,6 @@
 package com.iacovelli.moviesapp.tvshowlist
 
-import com.iacovelli.moviesapp.common.TvShowService
+import com.iacovelli.moviesapp.common.io.TvShowService
 import com.iacovelli.moviesapp.common.io.MoviesRetrofit
 import com.iacovelli.moviesapp.models.TvShowResponse
 import io.reactivex.Single

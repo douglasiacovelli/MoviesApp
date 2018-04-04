@@ -6,7 +6,7 @@
     <data>
         <variable
             name="presenter"
-            type="com.iacovelli.moviesapp.common.LoadingPresenter"/>
+            type="com.iacovelli.moviesapp.common.ui.LoadingPresenter"/>
     </data>
 
     <android.support.constraint.ConstraintLayout

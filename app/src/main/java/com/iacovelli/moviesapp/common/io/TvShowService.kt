@@ -1,4 +1,4 @@
-package com.iacovelli.moviesapp.common
+package com.iacovelli.moviesapp.common.io
 
 import com.iacovelli.moviesapp.models.TvShowResponse
 import io.reactivex.Single

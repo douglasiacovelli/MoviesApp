@@ -1,4 +1,4 @@
-package com.iacovelli.moviesapp.common
+package com.iacovelli.moviesapp.common.ui
 
 import android.databinding.BaseObservable
 import android.view.View

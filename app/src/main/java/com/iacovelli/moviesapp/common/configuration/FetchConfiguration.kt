@@ -14,8 +14,9 @@ class FetchConfiguration(
                 .getConfiguration()
                 .map {
                     val baseUrl = it.images.secureBaseUrl
-                    val imageSizes = it.images.backdropSizes[it.images.backdropSizes.lastIndex - 2]
-                    SimpleConfiguration(baseUrl, imageSizes)
+                    val backdropSize = it.images.backdropSizes[it.images.backdropSizes.lastIndex - 2]
+                    val posterSize = it.images.posterSizes[it.images.posterSizes.lastIndex - 2]
+                    SimpleConfiguration(baseUrl, backdropSize, posterSize)
                 }
                 .doOnSuccess {
                     saveConfiguration.execute(it)
