@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">MoviesApp</string>
+    <string name="app_name">Movies App</string>
     <string name="action_settings">Settings</string>
     <string name="connection_error">Oops, please check your connection</string>
     <string name="unexpected_error">Oops, unexpected error. Please try again later.</string>
+    <string name="popular_tv_shows">Most Popular Tv Shows</string>
 </resources>

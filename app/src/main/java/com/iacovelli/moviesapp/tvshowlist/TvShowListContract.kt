@@ -5,5 +5,5 @@ import com.iacovelli.moviesapp.models.TvShow
 
 interface TvShowListContract: BaseContract {
     fun openTvShowDetail(tvShow: TvShow)
-    fun setupList(tvShowList: List<TvShow>)
+    fun setupList(tvShowList: ArrayList<TvShow>)
 }

@@ -5,6 +5,7 @@ import com.iacovelli.moviesapp.common.BasePresenter
 import com.iacovelli.moviesapp.common.configuration.FetchConfiguration
 import com.iacovelli.moviesapp.models.SimpleConfiguration
 import com.iacovelli.moviesapp.models.TvShowResponse
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -17,6 +18,8 @@ class TvShowListPresenter(
 ): BasePresenter(contract) {
 
     var tvShowResponse: TvShowResponse? = null
+    var currentPage = 1
+    var loadingNextResults = false
 
     init {
         fetchData()
@@ -24,6 +27,28 @@ class TvShowListPresenter(
 
     override fun tryAgain() {
         fetchData()
+    }
+
+    fun shouldFetchNextPage(position: Int): Boolean {
+        tvShowResponse?.let {
+            return !loadingNextResults
+                    && position >= it.results.size - 4
+                    && it.isNextPageAvailable()
+        }
+        return false
+    }
+
+    fun fetchNextPage(): Observable<TvShowResponse> {
+        loadingNextResults = true
+        return getTvShowList.execute(currentPage + 1)
+                .doOnSuccess {
+                    tvShowResponse = it
+                    currentPage = it.page
+                }
+                .doAfterTerminate {
+                    loadingNextResults = false
+                }
+                .toObservable()
     }
 
     private fun fetchData() {
@@ -38,7 +63,7 @@ class TvShowListPresenter(
         val disposable = configurationPipeline
                 .subscribeOn(Schedulers.io())
                 .flatMap {
-                    getTvShowList.execute()
+                    getTvShowList.execute(currentPage)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doAfterTerminate {
@@ -46,6 +71,7 @@ class TvShowListPresenter(
                 }
                 .subscribe({
                     tvShowResponse = it
+                    currentPage = it.page
                     contract.setupList(it.results)
                 }, {
                     showTryAgain()

@@ -35,4 +35,5 @@ abstract class BasePresenter(
     private fun getCachedConfiguration(): SimpleConfiguration? {
         return getCachedConfiguration.execute()
     }
+
 }

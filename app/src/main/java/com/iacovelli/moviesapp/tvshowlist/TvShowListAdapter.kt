@@ -9,11 +9,12 @@ import com.iacovelli.moviesapp.BR
 import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.databinding.ItemTvShowBinding
 import com.iacovelli.moviesapp.models.TvShow
+import com.iacovelli.moviesapp.models.TvShowResponse
 import com.iacovelli.moviesapp.tvshowlist.TvShowListAdapter.TvShowViewHolder
 
 class TvShowListAdapter(
         private val contract: TvShowListContract,
-        private var data: List<TvShow>
+        private val data: ArrayList<TvShow>
 ): RecyclerView.Adapter<TvShowViewHolder>() {
 
     override fun getItemCount() = data.size
@@ -34,6 +35,12 @@ class TvShowListAdapter(
     override fun onViewRecycled(holder: TvShowViewHolder) {
         super.onViewRecycled(holder)
         holder.clear()
+    }
+
+    fun addNextResults(tvShowResponse: TvShowResponse) {
+        val lastPosition = data.size
+        data.addAll(tvShowResponse.results)
+        notifyItemRangeInserted(lastPosition, tvShowResponse.results.size)
     }
 
     class TvShowViewHolder(val dataBinding: ViewDataBinding):
