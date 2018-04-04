@@ -46,6 +46,7 @@ class TvShowListPresenter(
                 }
                 .subscribe({
                     tvShowResponse = it
+                    contract.setupList(it.results)
                 }, {
                     showTryAgain()
                     handleError(it)

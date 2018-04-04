@@ -13,6 +13,15 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="TitleText">
+        <item name="android:fontFamily">@font/source_sans_pro_bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="RatingBar">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
