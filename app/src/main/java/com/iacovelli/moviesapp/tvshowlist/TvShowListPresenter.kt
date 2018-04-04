@@ -29,10 +29,10 @@ class TvShowListPresenter(
         fetchData()
     }
 
-    fun shouldFetchNextPage(position: Int): Boolean {
+    fun shouldFetchNextPage(position: Int, loadedItemsCount: Int): Boolean {
         tvShowResponse?.let {
             return !loadingNextResults
-                    && position >= it.results.size - 4
+                    && position >= loadedItemsCount - 4
                     && it.isNextPageAvailable()
         }
         return false
@@ -66,10 +66,8 @@ class TvShowListPresenter(
                     getTvShowList.execute(currentPage)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doAfterTerminate {
-                    setLoading(false)
-                }
                 .subscribe({
+                    setLoading(false)
                     tvShowResponse = it
                     currentPage = it.page
                     contract.setupList(it.results)

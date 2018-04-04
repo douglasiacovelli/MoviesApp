@@ -12,7 +12,7 @@ abstract class BasePresenter(
                 GetCachedConfiguration(baseContract.getContext())
 ): BaseObservable() {
 
-    private val loadingPresenter = LoadingPresenter(::tryAgain)
+    val loadingPresenter = LoadingPresenter(::tryAgain)
     val compositeDisposable = CompositeDisposable()
     var configuration = getCachedConfiguration()
 

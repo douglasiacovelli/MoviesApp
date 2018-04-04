@@ -4,4 +4,6 @@
     <string name="connection_error">Oops, please check your connection</string>
     <string name="unexpected_error">Oops, unexpected error. Please try again later.</string>
     <string name="popular_tv_shows">Most Popular Tv Shows</string>
+    <string name="try_again">Try again</string>
+    <string name="try_again_message">Oops, something has gone wrong</string>
 </resources>

@@ -52,7 +52,8 @@ class TvShowListActivity : BaseActivity(), TvShowListContract {
                 }
                 .distinctUntilChanged()
                 .filter {
-                    (presenter as? TvShowListPresenter)?.shouldFetchNextPage(it) == true
+                    val itemCount = (dataBinding.list.adapter as TvShowListAdapter).itemCount
+                    (presenter as? TvShowListPresenter)?.shouldFetchNextPage(it, itemCount) == true
                 }
                 .observeOn(Schedulers.io())
                 .flatMap {

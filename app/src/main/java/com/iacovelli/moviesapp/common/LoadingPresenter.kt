@@ -1,12 +1,16 @@
 package com.iacovelli.moviesapp.common
 
+import android.databinding.BaseObservable
 import android.view.View
 
-class LoadingPresenter(val tryAgainListener: () -> Unit) {
+class LoadingPresenter(val tryAgainListener: () -> Unit): BaseObservable() {
     private var state = State.HIDDEN
 
     val loadingVisibility
         get() = if (state == State.LOADING) View.VISIBLE else View.GONE
+
+    val pageVisibility
+        get() = if (state == State.HIDDEN) View.GONE else View.VISIBLE
 
     val tryAgainVisibility
         get() = if (state == State.TRY_AGAIN) View.VISIBLE else View.GONE
@@ -17,10 +21,12 @@ class LoadingPresenter(val tryAgainListener: () -> Unit) {
         } else {
             State.HIDDEN
         }
+        notifyChange()
     }
 
     fun showTryAgain() {
         state = State.TRY_AGAIN
+        notifyChange()
     }
 
     fun onClickTryAgain() {
