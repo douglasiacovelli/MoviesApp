@@ -1,4 +1,4 @@
-package com.iacovelli.moviesapp.tvshowlist
+package com.iacovelli.moviesapp.common.ui
 
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
@@ -10,13 +10,12 @@ import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.common.OpenTvShowContract
 import com.iacovelli.moviesapp.models.TvShow
 import com.iacovelli.moviesapp.models.TvShowResponse
-import com.iacovelli.moviesapp.tvshowlist.TvShowListAdapter.TvShowViewHolder
 
 class TvShowListAdapter(
         private val contract: OpenTvShowContract,
         private val data: ArrayList<TvShow>,
         private val view: Int = R.layout.item_tv_show
-): RecyclerView.Adapter<TvShowViewHolder>() {
+): RecyclerView.Adapter<TvShowListAdapter.TvShowViewHolder>() {
 
     override fun getItemCount() = data.size
 

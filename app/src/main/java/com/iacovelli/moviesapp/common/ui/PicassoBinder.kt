@@ -1,7 +1,6 @@
 package com.iacovelli.moviesapp.common.ui
 
 import android.databinding.BindingAdapter
-import android.util.Log
 import android.widget.ImageView
 import com.iacovelli.moviesapp.common.configuration.GetCachedConfiguration
 import com.squareup.picasso.provider.PicassoProvider
@@ -29,7 +28,6 @@ class PicassoBinder {
         }
 
         private fun showImageCenterCropped(imageView: ImageView, url: String) {
-            Log.d("debug", "Picasso please load: $url")
             PicassoProvider.get()
                     .load(url)
                     .fit()

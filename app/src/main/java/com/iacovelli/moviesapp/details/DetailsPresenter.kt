@@ -1,7 +1,7 @@
 package com.iacovelli.moviesapp.details
 
 import com.iacovelli.moviesapp.common.BasePresenter
-import com.iacovelli.moviesapp.tvshowlist.ItemTvShowPresenter
+import com.iacovelli.moviesapp.common.ui.ItemTvShowPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -15,6 +15,16 @@ class DetailsPresenter(
 
     init {
         fetchData()
+    }
+
+    override fun tryAgain() {
+        fetchData()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tvShowPresenter?.onDestroy()
+        tvShowPresenter = null
     }
 
     private fun fetchData() {

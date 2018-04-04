@@ -31,7 +31,7 @@ abstract class BasePresenter(
         loadingPresenter.showTryAgain()
     }
 
-    fun onDestroy() {
+    open fun onDestroy() {
         compositeDisposable.clear()
     }
 

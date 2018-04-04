@@ -5,7 +5,7 @@
 
     <data>
         <variable name="presenter"
-            type="com.iacovelli.moviesapp.tvshowlist.ItemTvShowPresenter" />
+            type="com.iacovelli.moviesapp.common.ui.ItemTvShowPresenter" />
     </data>
 
     <android.support.constraint.ConstraintLayout

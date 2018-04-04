@@ -10,7 +10,7 @@ import com.iacovelli.moviesapp.common.BaseActivity
 import com.iacovelli.moviesapp.common.OpenTvShowContract
 import com.iacovelli.moviesapp.databinding.ActivityDetailsBinding
 import com.iacovelli.moviesapp.models.TvShow
-import com.iacovelli.moviesapp.tvshowlist.TvShowListAdapter
+import com.iacovelli.moviesapp.common.ui.TvShowListAdapter
 import kotlinx.android.synthetic.main.activity_tv_show_list.*
 
 class DetailsActivity: BaseActivity(), DetailsContract, OpenTvShowContract {

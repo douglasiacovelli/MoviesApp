@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.common.BaseActivity
+import com.iacovelli.moviesapp.common.ui.TvShowListAdapter
 import com.iacovelli.moviesapp.databinding.ActivityTvShowListBinding
 import com.iacovelli.moviesapp.details.DetailsActivity
 import com.iacovelli.moviesapp.models.TvShow

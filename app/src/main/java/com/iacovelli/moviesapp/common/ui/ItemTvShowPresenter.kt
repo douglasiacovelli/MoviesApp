@@ -1,4 +1,4 @@
-package com.iacovelli.moviesapp.tvshowlist
+package com.iacovelli.moviesapp.common.ui
 
 import com.iacovelli.moviesapp.common.OpenTvShowContract
 import com.iacovelli.moviesapp.models.TvShow
