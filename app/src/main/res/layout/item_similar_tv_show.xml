@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="presenter"
+            type="com.iacovelli.moviesapp.tvshowlist.ItemTvShowPresenter" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_similar"
+        android:layout_marginEnd="@dimen/smallSize"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:onClick="@{(v) -> presenter.onClick()}">
+
+        <ImageView
+            android:id="@+id/poster"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:posterImage="@{presenter.posterUrl}"
+            tools:src="@drawable/backdrop_placeholder"
+            tools:scaleType="centerCrop" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:maxLines="2"
+            style="@style/Text.Title.Poster"
+            android:paddingTop="@dimen/smallSize"
+            android:paddingBottom="@dimen/smallSize"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:text="@{presenter.name}"
+            tools:text="La Casa de Papel"
+            android:ellipsize="end"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/poster" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

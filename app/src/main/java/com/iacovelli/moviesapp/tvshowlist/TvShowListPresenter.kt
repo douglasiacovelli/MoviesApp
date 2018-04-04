@@ -1,6 +1,5 @@
 package com.iacovelli.moviesapp.tvshowlist
 
-import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.common.BasePresenter
 import com.iacovelli.moviesapp.common.configuration.FetchConfiguration
 import com.iacovelli.moviesapp.models.SimpleConfiguration
@@ -9,7 +8,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.io.IOException
 
 class TvShowListPresenter(
         private val contract: TvShowListContract,
@@ -84,13 +82,5 @@ class TvShowListPresenter(
                 .doOnSuccess {
                     configuration = it
                 }
-    }
-
-    private fun handleError(throwable: Throwable) {
-        if (throwable is IOException) {
-            contract.showMessage(R.string.connection_error)
-        } else {
-            contract.showMessage(R.string.unexpected_error)
-        }
     }
 }

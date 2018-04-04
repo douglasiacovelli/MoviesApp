@@ -13,9 +13,32 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="TitleText">
+    <style name="AppTheme.NoActionBar.TransparentStatusBar">
+    </style>
+
+    <style name="Text">
+        <item name="android:layout_marginStart">@dimen/normalSize</item>
+        <item name="android:layout_marginEnd">@dimen/normalSize</item>
+        <item name="android:fontFamily">@font/source_sans_pro</item>
+    </style>
+
+    <style name="Text.Title">
         <item name="android:fontFamily">@font/source_sans_pro_bold</item>
         <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="Text.Title.Poster">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Text.SubTitle">
+        <item name="android:fontFamily">@font/source_sans_pro_light</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_marginBottom">@dimen/normalSize</item>
+    </style>
+
+    <style name="Text.Body">
+        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="RatingBar">

@@ -1,5 +1,6 @@
 package com.iacovelli.moviesapp.common.io
 
+import com.iacovelli.moviesapp.models.TvShow
 import com.iacovelli.moviesapp.models.TvShowResponse
 import io.reactivex.Single
 import retrofit2.http.GET
@@ -12,5 +13,5 @@ interface TvShowService {
     fun getTvShows(@Query("page") page: Int): Single<TvShowResponse>
 
     @GET("tv/{id}?append_to_response=similar")
-    fun getTvShow(@Path("id") tvShowId: Int)
+    fun getTvShow(@Path("id") tvShowId: Int): Single<TvShow>
 }

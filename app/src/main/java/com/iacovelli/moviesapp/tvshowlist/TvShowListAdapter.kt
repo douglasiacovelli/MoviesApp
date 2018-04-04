@@ -7,22 +7,23 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.iacovelli.moviesapp.BR
 import com.iacovelli.moviesapp.R
-import com.iacovelli.moviesapp.databinding.ItemTvShowBinding
+import com.iacovelli.moviesapp.common.OpenTvShowContract
 import com.iacovelli.moviesapp.models.TvShow
 import com.iacovelli.moviesapp.models.TvShowResponse
 import com.iacovelli.moviesapp.tvshowlist.TvShowListAdapter.TvShowViewHolder
 
 class TvShowListAdapter(
-        private val contract: TvShowListContract,
-        private val data: ArrayList<TvShow>
+        private val contract: OpenTvShowContract,
+        private val data: ArrayList<TvShow>,
+        private val view: Int = R.layout.item_tv_show
 ): RecyclerView.Adapter<TvShowViewHolder>() {
 
     override fun getItemCount() = data.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TvShowViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val dataBinding: ItemTvShowBinding =
-                DataBindingUtil.inflate(layoutInflater, R.layout.item_tv_show, parent, false)
+        val dataBinding: ViewDataBinding =
+                DataBindingUtil.inflate(layoutInflater, view, parent, false)
         return TvShowViewHolder(dataBinding)
     }
 

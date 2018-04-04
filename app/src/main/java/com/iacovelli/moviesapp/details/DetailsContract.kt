@@ -1,9 +1,9 @@
-package com.iacovelli.moviesapp.tvshowlist
+package com.iacovelli.moviesapp.details
 
 import com.iacovelli.moviesapp.common.BaseContract
 import com.iacovelli.moviesapp.common.OpenTvShowContract
 import com.iacovelli.moviesapp.models.TvShow
 
-interface TvShowListContract: BaseContract, OpenTvShowContract {
+interface DetailsContract: BaseContract, OpenTvShowContract {
     fun setupList(tvShowList: ArrayList<TvShow>)
 }

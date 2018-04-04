@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".tvshowlist.TvShowListActivity"
+            android:name=".tvshowlist.TvShowContractListActivity"
             android:label="@string/popular_tv_shows"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -20,6 +20,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".details.DetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
         </activity>
     </application>
 
