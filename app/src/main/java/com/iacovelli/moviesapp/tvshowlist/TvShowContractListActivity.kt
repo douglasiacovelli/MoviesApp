@@ -3,7 +3,6 @@ package com.iacovelli.moviesapp.tvshowlist
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.common.BaseActivity
 import com.iacovelli.moviesapp.common.ui.TvShowListAdapter
@@ -51,6 +50,10 @@ class TvShowContractListActivity : BaseActivity(), TvShowListContract {
         setupPagination()
     }
 
+    override fun addResults(results: ArrayList<TvShow>) {
+        (dataBinding.list.adapter as TvShowListAdapter).addNextResults(results)
+    }
+
     private fun setupPagination() {
         if (compositeDisposable.size() == 0 && dataBinding.list.adapter != null) {
             val disposable = RxRecyclerView.scrollEvents(dataBinding.list)
@@ -69,9 +72,8 @@ class TvShowContractListActivity : BaseActivity(), TvShowListContract {
                     }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        (dataBinding.list.adapter as TvShowListAdapter).addNextResults(it)
                     }, {
-                        Log.e("debug", "error while fetching next nextPage")
+                        presenter?.handleError(it)
                     })
 
             compositeDisposable.add(disposable)

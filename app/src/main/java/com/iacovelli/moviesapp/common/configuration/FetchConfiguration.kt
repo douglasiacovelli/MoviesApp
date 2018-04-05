@@ -1,13 +1,12 @@
 package com.iacovelli.moviesapp.common.configuration
 
-import com.iacovelli.moviesapp.common.BaseContract
 import com.iacovelli.moviesapp.common.io.MoviesRetrofit
 import com.iacovelli.moviesapp.models.SimpleConfiguration
 import io.reactivex.Single
 
 class FetchConfiguration(
-        contract: BaseContract,
-        private val saveConfiguration: SaveConfiguration = SaveConfiguration(contract.getContext())
+        cache: Cache,
+        private val saveConfiguration: SaveConfiguration = SaveConfiguration(cache)
 ) {
     fun execute(): Single<SimpleConfiguration> {
         return MoviesRetrofit.instance.create(ConfigurationService::class.java)

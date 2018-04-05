@@ -1,9 +1,9 @@
 package com.iacovelli.moviesapp.tvshowlist
 
 import com.iacovelli.moviesapp.common.BasePresenter
-import com.iacovelli.moviesapp.common.configuration.Cache
 import com.iacovelli.moviesapp.common.configuration.FetchConfiguration
-import com.iacovelli.moviesapp.common.configuration.GetDefaultCache
+import com.iacovelli.moviesapp.common.configuration.GetCachedConfiguration
+import com.iacovelli.moviesapp.common.configuration.SharedPreference
 import com.iacovelli.moviesapp.models.SimpleConfiguration
 import com.iacovelli.moviesapp.models.TvShowResponse
 import io.reactivex.Observable
@@ -14,12 +14,15 @@ import io.reactivex.schedulers.Schedulers
 class TvShowListPresenter(
         private val contract: TvShowListContract,
         private val getTvShowList: GetTvShowList = GetTvShowList(),
-        private val fetchConfiguration: FetchConfiguration = FetchConfiguration(contract),
-        cache: Cache = GetDefaultCache(contract.getContext()).execute()
-): BasePresenter(contract, cache) {
+        private val fetchConfiguration: FetchConfiguration =
+                FetchConfiguration(SharedPreference(contract.getContext())),
+        private val getCachedConfiguration: GetCachedConfiguration =
+                GetCachedConfiguration(SharedPreference(contract.getContext()))
+): BasePresenter(contract) {
 
-    var tvShowResponse: TvShowResponse? = null
-    var currentPage = 1
+    private var configuration: SimpleConfiguration? = null
+    private var tvShowResponse: TvShowResponse? = null
+    private var currentPage = 1
     var loadingNextResults = false
 
     init {
@@ -45,6 +48,7 @@ class TvShowListPresenter(
                 .doOnSuccess {
                     tvShowResponse = it
                     currentPage = it.page
+                    contract.addResults(it.results)
                 }
                 .doAfterTerminate {
                     loadingNextResults = false
@@ -54,6 +58,7 @@ class TvShowListPresenter(
 
     private fun fetchData() {
         setLoading(true)
+        configuration = getCachedConfiguration.execute()
 
         val configurationPipeline = if (configuration == null) {
             fetchConfigurationFromTheServer()

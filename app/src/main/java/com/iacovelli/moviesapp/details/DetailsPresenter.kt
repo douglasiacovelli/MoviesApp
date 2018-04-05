@@ -1,8 +1,6 @@
 package com.iacovelli.moviesapp.details
 
 import com.iacovelli.moviesapp.common.BasePresenter
-import com.iacovelli.moviesapp.common.configuration.Cache
-import com.iacovelli.moviesapp.common.configuration.GetDefaultCache
 import com.iacovelli.moviesapp.common.ui.ItemTvShowPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -10,9 +8,8 @@ import io.reactivex.schedulers.Schedulers
 class DetailsPresenter(
         private val contract: DetailsContract,
         private val tvShowId: Int,
-        private val getTvShow: GetTvShow = GetTvShow(),
-        cache: Cache = GetDefaultCache(contract.getContext()).execute()
-): BasePresenter(contract, cache) {
+        private val getTvShow: GetTvShow = GetTvShow()
+): BasePresenter(contract) {
 
     var tvShowPresenter: ItemTvShowPresenter? = null
 

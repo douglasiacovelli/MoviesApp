@@ -3,7 +3,6 @@ package com.iacovelli.moviesapp.details
 import android.view.View
 import com.iacovelli.moviesapp.ReadFixture
 import com.iacovelli.moviesapp.RxOverridingRule
-import com.iacovelli.moviesapp.common.FakeCache
 import com.iacovelli.moviesapp.common.io.MoviesRetrofit
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
@@ -30,10 +29,10 @@ class DetailsPresenterTest {
         val mockWebServer = MockWebServer()
         MoviesRetrofit.BASE_URL = mockWebServer.url("").toString()
 
-        val fixture = ReadFixture().execute("TvShowFixture.json")
+        val fixture = ReadFixture().execute("TvShowDetails.json")
 
         mockWebServer.enqueue(MockResponse().setBody(fixture))
-        val presenter = DetailsPresenter(contract, 9, cache = FakeCache(true))
+        val presenter = DetailsPresenter(contract, 9)
 
         verify(contract).setupList(any())
         Assert.assertNotNull(presenter.tvShowPresenter)
@@ -47,7 +46,7 @@ class DetailsPresenterTest {
         MoviesRetrofit.BASE_URL = mockWebServer.url("").toString()
 
         mockWebServer.enqueue(MockResponse().setResponseCode(400))
-        val presenter = DetailsPresenter(contract, 9, cache = FakeCache(true))
+        val presenter = DetailsPresenter(contract, 9)
 
         verify(contract, never()).setupList(any())
         Assert.assertNull(presenter.tvShowPresenter)

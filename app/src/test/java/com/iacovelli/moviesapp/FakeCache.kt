@@ -1,9 +1,10 @@
-package com.iacovelli.moviesapp.common
+package com.iacovelli.moviesapp
 
 import com.iacovelli.moviesapp.common.configuration.Cache
 import com.iacovelli.moviesapp.common.io.CONFIG_BACKDROP_SIZE
 import com.iacovelli.moviesapp.common.io.CONFIG_BASE_URL
 import com.iacovelli.moviesapp.common.io.CONFIG_POSTER_SIZE
+import com.iacovelli.moviesapp.models.SimpleConfiguration
 
 const val FAKE_URL = "baseUrl"
 const val FAKE_POSTER_SIZE = "w300"
@@ -24,5 +25,8 @@ class FakeCache(private val existsInfo: Boolean): Cache {
             CONFIG_BACKDROP_SIZE -> FAKE_BACKDROP_SIZE
             else -> ""
         }
+    }
+
+    override fun saveConfiguration(configuration: SimpleConfiguration) {
     }
 }

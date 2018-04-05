@@ -9,7 +9,6 @@ import com.iacovelli.moviesapp.BR
 import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.common.OpenTvShowContract
 import com.iacovelli.moviesapp.models.TvShow
-import com.iacovelli.moviesapp.models.TvShowResponse
 
 class TvShowListAdapter(
         private val contract: OpenTvShowContract,
@@ -37,10 +36,10 @@ class TvShowListAdapter(
         holder.clear()
     }
 
-    fun addNextResults(tvShowResponse: TvShowResponse) {
+    fun addNextResults(tvShowResults: List<TvShow>) {
         val lastPosition = data.size
-        data.addAll(tvShowResponse.results)
-        notifyItemRangeInserted(lastPosition, tvShowResponse.results.size)
+        data.addAll(tvShowResults)
+        notifyItemRangeInserted(lastPosition, tvShowResults.size)
     }
 
     class TvShowViewHolder(val dataBinding: ViewDataBinding):
