@@ -11,14 +11,13 @@ object MoviesRetrofit {
     var BASE_URL: String = "https://api.themoviedb.org/3/"
 
     val instance: Retrofit
-        by lazy {
-            Retrofit.Builder()
+        get() = Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(GsonConverter.instance))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .client(okHttpClient)
                     .build()
-        }
+
 
 
     private val okHttpClient: OkHttpClient
