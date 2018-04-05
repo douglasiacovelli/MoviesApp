@@ -5,13 +5,13 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.view.MenuItem
 import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.common.BaseActivity
 import com.iacovelli.moviesapp.common.OpenTvShowContract
+import com.iacovelli.moviesapp.common.ui.TvShowListAdapter
 import com.iacovelli.moviesapp.databinding.ActivityDetailsBinding
 import com.iacovelli.moviesapp.models.TvShow
-import com.iacovelli.moviesapp.common.ui.TvShowListAdapter
-import kotlinx.android.synthetic.main.activity_tv_show_list.*
 
 class DetailsActivity: BaseActivity(), DetailsContract, OpenTvShowContract {
     lateinit var dataBinding: ActivityDetailsBinding
@@ -23,7 +23,9 @@ class DetailsActivity: BaseActivity(), DetailsContract, OpenTvShowContract {
         presenter = DetailsPresenter(this, tvShowId)
 
         dataBinding.presenter = presenter as DetailsPresenter
-        setSupportActionBar(toolbar)
+        setSupportActionBar(dataBinding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
     override fun setupList(tvShowList: ArrayList<TvShow>) {
@@ -34,6 +36,14 @@ class DetailsActivity: BaseActivity(), DetailsContract, OpenTvShowContract {
 
     override fun openTvShow(id: Int) {
         startActivity(DetailsActivity.buildIntent(this, id))
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            onBackPressed()
+            return false
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {
