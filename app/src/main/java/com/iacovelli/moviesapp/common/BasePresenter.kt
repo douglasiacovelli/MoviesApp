@@ -11,7 +11,7 @@ import java.io.IOException
 
 open class BasePresenter(
         private val baseContract: BaseContract,
-        private val getCachedConfiguration: GetCachedConfiguration =
+        getCachedConfiguration: GetCachedConfiguration =
                 GetCachedConfiguration(SharedPreference(baseContract.getContext()))
 ): BaseObservable() {
 
