@@ -3,21 +3,20 @@ package com.iacovelli.moviesapp.common
 import android.databinding.BaseObservable
 import android.util.Log
 import com.iacovelli.moviesapp.R
+import com.iacovelli.moviesapp.common.configuration.Cache
 import com.iacovelli.moviesapp.common.configuration.GetCachedConfiguration
-import com.iacovelli.moviesapp.common.configuration.SharedPreference
 import com.iacovelli.moviesapp.common.ui.LoadingPresenter
 import io.reactivex.disposables.CompositeDisposable
 import java.io.IOException
 
 open class BasePresenter(
         private val baseContract: BaseContract,
-        getCachedConfiguration: GetCachedConfiguration =
-                GetCachedConfiguration(SharedPreference(baseContract.getContext()))
+        val cache: Cache
 ): BaseObservable() {
 
     val loadingPresenter = LoadingPresenter(::tryAgain)
     val compositeDisposable = CompositeDisposable()
-    var configuration =  getCachedConfiguration.execute()
+    var configuration =  GetCachedConfiguration(cache).execute()
 
     open fun tryAgain() {
         Log.w("debug", "This method should be overridden")

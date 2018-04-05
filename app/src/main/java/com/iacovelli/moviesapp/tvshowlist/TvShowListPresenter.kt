@@ -1,7 +1,9 @@
 package com.iacovelli.moviesapp.tvshowlist
 
 import com.iacovelli.moviesapp.common.BasePresenter
+import com.iacovelli.moviesapp.common.configuration.Cache
 import com.iacovelli.moviesapp.common.configuration.FetchConfiguration
+import com.iacovelli.moviesapp.common.configuration.GetDefaultCache
 import com.iacovelli.moviesapp.models.SimpleConfiguration
 import com.iacovelli.moviesapp.models.TvShowResponse
 import io.reactivex.Observable
@@ -12,8 +14,9 @@ import io.reactivex.schedulers.Schedulers
 class TvShowListPresenter(
         private val contract: TvShowListContract,
         private val getTvShowList: GetTvShowList = GetTvShowList(),
-        private val fetchConfiguration: FetchConfiguration = FetchConfiguration(contract)
-): BasePresenter(contract) {
+        private val fetchConfiguration: FetchConfiguration = FetchConfiguration(contract),
+        cache: Cache = GetDefaultCache(contract.getContext()).execute()
+): BasePresenter(contract, cache) {
 
     var tvShowResponse: TvShowResponse? = null
     var currentPage = 1

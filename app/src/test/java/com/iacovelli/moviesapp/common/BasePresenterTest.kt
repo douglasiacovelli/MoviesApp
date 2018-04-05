@@ -2,7 +2,6 @@ package com.iacovelli.moviesapp.common
 
 import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.common.configuration.Cache
-import com.iacovelli.moviesapp.common.configuration.GetCachedConfiguration
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.Single
@@ -59,5 +58,5 @@ class BasePresenterTest {
     }
 
     private fun instantiatePresenter(cache: Cache) =
-            BasePresenter(contract, GetCachedConfiguration(cache))
+            BasePresenter(contract, cache)
 }
