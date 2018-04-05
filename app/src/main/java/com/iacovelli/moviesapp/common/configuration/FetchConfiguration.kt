@@ -5,8 +5,7 @@ import com.iacovelli.moviesapp.models.SimpleConfiguration
 import io.reactivex.Single
 
 class FetchConfiguration(
-        cache: Cache,
-        private val saveConfiguration: SaveConfiguration = SaveConfiguration(cache)
+        private val cache: Cache
 ) {
     fun execute(): Single<SimpleConfiguration> {
         return MoviesRetrofit.instance.create(ConfigurationService::class.java)
@@ -18,7 +17,7 @@ class FetchConfiguration(
                     SimpleConfiguration(baseUrl, backdropSize, posterSize)
                 }
                 .doOnSuccess {
-                    saveConfiguration.execute(it)
+                    cache.saveConfiguration(it)
                 }
     }
 }

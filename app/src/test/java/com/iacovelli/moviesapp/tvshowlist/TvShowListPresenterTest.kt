@@ -51,6 +51,7 @@ class TvShowListPresenterTest {
 
         verify(contract).setupList(any())
         verify(contract, never()).showMessage(any())
+        webServer.shutdown()
     }
 
     @Test
@@ -83,6 +84,7 @@ class TvShowListPresenterTest {
 
         verify(contract).setupList(any())
         verify(contract, never()).showMessage(any())
+        webServer.shutdown()
     }
 
     @Test
@@ -108,6 +110,7 @@ class TvShowListPresenterTest {
         verify(contract).setupList(any())
         verify(contract).addResults(any())
         verify(contract, never()).showMessage(any())
+        webServer.shutdown()
     }
 
     @Test
@@ -121,6 +124,7 @@ class TvShowListPresenterTest {
         assertEquals(View.VISIBLE, presenter.loadingPresenter.tryAgainVisibility)
         verify(contract, never()).setupList(any())
         verify(contract).showMessage(any())
+        webServer.shutdown()
     }
 
     @Test
@@ -134,6 +138,7 @@ class TvShowListPresenterTest {
         assertEquals(View.VISIBLE, presenter.loadingPresenter.tryAgainVisibility)
         verify(contract, never()).setupList(any())
         verify(contract).showMessage(any())
+        webServer.shutdown()
     }
 
     private fun instantiatePresenter(cache: Cache = defaultCache): TvShowListPresenter {
