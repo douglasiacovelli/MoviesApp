@@ -3,7 +3,10 @@ package com.iacovelli.moviesapp.common.ui
 import android.databinding.BaseObservable
 import android.view.View
 
-class LoadingPresenter(val tryAgainListener: () -> Unit): BaseObservable() {
+class LoadingPresenter(
+        private val tryAgainListener: () -> Unit
+): BaseObservable() {
+
     private var state = State.HIDDEN
 
     val loadingVisibility
@@ -33,7 +36,7 @@ class LoadingPresenter(val tryAgainListener: () -> Unit): BaseObservable() {
         tryAgainListener()
     }
 
-    enum class State {
+    private enum class State {
         HIDDEN,
         LOADING,
         TRY_AGAIN

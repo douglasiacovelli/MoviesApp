@@ -6,7 +6,6 @@ import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.common.configuration.GetCachedConfiguration
 import com.iacovelli.moviesapp.common.configuration.SharedPreference
 import com.iacovelli.moviesapp.common.ui.LoadingPresenter
-import com.iacovelli.moviesapp.models.SimpleConfiguration
 import io.reactivex.disposables.CompositeDisposable
 import java.io.IOException
 
@@ -18,7 +17,7 @@ open class BasePresenter(
 
     val loadingPresenter = LoadingPresenter(::tryAgain)
     val compositeDisposable = CompositeDisposable()
-    var configuration = getCachedConfiguration()
+    var configuration =  getCachedConfiguration.execute()
 
     open fun tryAgain() {
         Log.w("debug", "This method should be overridden")
@@ -43,9 +42,4 @@ open class BasePresenter(
             baseContract.showMessage(R.string.unexpected_error)
         }
     }
-
-    private fun getCachedConfiguration(): SimpleConfiguration? {
-        return getCachedConfiguration.execute()
-    }
-
 }
