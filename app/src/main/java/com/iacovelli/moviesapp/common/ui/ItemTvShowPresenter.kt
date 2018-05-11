@@ -14,7 +14,7 @@ class ItemTvShowPresenter(
         get() = tvShow.overview ?: ""
 
     val rating: Float
-        get() = tvShow.voteAverage
+        get() = tvShow.voteAverage / 2f
 
     val backdropUrl: String?
         get() = tvShow.backdropPath
