@@ -36,7 +36,7 @@
                         android:layout_height="200dp"
                         tools:src="@drawable/backdrop_placeholder"
                         tools:scaleType="centerCrop"
-                        app:backdropImage="@{presenter.tvShowPresenter.backdropUrl}"
+                        app:backdropImage="@{presenter.tvShow.backdropUrl}"
                         android:fitsSystemWindows="true"/>
 
                     <View
@@ -75,7 +75,7 @@
                     tools:text="La Casa de Papel"
                     android:maxLines="2"
                     android:ellipsize="end"
-                    android:text="@{presenter.tvShowPresenter.name}"
+                    android:text="@{presenter.tvShow.name}"
                     android:textColor="@color/colorAccent" />
 
                 <TextView
@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/Text.Body"
-                    android:text="@{presenter.tvShowPresenter.overview}"
+                    android:text="@{presenter.tvShow.overview}"
                     android:layout_marginBottom="@dimen/normalSize"
                     tools:text="Carl² is a Canadian animated series which explores what would happen if a teenager had a clone. The concept of the cartoon is a mixture of biological studies and normal teenage life.\n\nCarl Crashman is a lazy 14-year-old who is only good at one thing: slacking. After a rough day and being tired of constantly doing things he hated, he was blogging on the" />
 
@@ -120,8 +120,10 @@
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
-        <include layout="@layout/loading"
-            app:presenter="@{presenter.loadingPresenter}"
-            tools:visibility="gone" />
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="@{presenter.status.loadingVisibility}"/>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

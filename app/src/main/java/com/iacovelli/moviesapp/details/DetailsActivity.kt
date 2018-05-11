@@ -1,10 +1,13 @@
 package com.iacovelli.moviesapp.details
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.MenuItem
 import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.common.BaseActivity
@@ -15,14 +18,36 @@ import com.iacovelli.moviesapp.models.TvShow
 
 class DetailsActivity: BaseActivity(), DetailsContract, OpenTvShowContract {
     lateinit var dataBinding: ActivityDetailsBinding
+    lateinit var viewModel: DetailsPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_details)
         val tvShowId = intent.getIntExtra(TV_SHOW_ID, 0)
-        presenter = DetailsPresenter(this, tvShowId)
+        val factory = DetailsPresenter.Factory(tvShowId)
 
-        dataBinding.presenter = presenter as DetailsPresenter
+        viewModel = ViewModelProviders.of(this, factory).get(DetailsPresenter::class.java)
+        dataBinding.presenter = viewModel
+        dataBinding.setLifecycleOwner(this)
+
+        setupViewModelObservers()
+        setupToolbar()
+    }
+
+    private fun setupViewModelObservers() {
+        viewModel.status.observe(this, Observer {
+            Log.d("debug", "teste ${it?.message}")
+            it?.message?.let {
+                showMessage(it)
+            }
+        })
+
+        viewModel.tvShow.observe(this, Observer {
+            setupList(it?.similar ?: arrayListOf())
+        })
+    }
+
+    private fun setupToolbar() {
         setSupportActionBar(dataBinding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)

@@ -22,6 +22,9 @@ class ItemTvShowPresenter(
     val posterUrl: String?
         get() = tvShow.posterPath
 
+    val similar: ArrayList<TvShow>
+        get() = tvShow.similar.results
+
     fun onClick() {
         contract?.openTvShow(tvShow.id)
     }

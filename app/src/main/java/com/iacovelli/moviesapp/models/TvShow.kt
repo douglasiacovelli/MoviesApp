@@ -7,5 +7,5 @@ data class TvShow(
         val backdropPath: String? = null,
         val overview: String? = null,
         val posterPath: String? = null,
-        val similar: TvShowResponse? = null
+        val similar: TvShowResponse
 )
