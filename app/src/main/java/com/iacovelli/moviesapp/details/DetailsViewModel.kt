@@ -4,13 +4,15 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.iacovelli.moviesapp.common.BaseViewModel
+import com.iacovelli.moviesapp.common.ItemTvShowFactory
 import com.iacovelli.moviesapp.common.ui.ItemTvShowPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class DetailsViewModel(
         private val tvShowId: Int,
-        private val getTvShow: GetTvShow = GetTvShow()
+        private val getTvShow: GetTvShow = GetTvShow(),
+        private val itemTvShowFactory: ItemTvShowFactory = ItemTvShowFactory()
 ): BaseViewModel() {
 
     val tvShow = MutableLiveData<ItemTvShowPresenter>()
@@ -26,7 +28,7 @@ class DetailsViewModel(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     setOk()
-                    tvShow.value = ItemTvShowPresenter(it)
+                    tvShow.value = itemTvShowFactory.create(it)
                 }, {
                     setTryAgain(it)
                 })

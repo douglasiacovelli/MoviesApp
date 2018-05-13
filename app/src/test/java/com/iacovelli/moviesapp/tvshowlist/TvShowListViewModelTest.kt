@@ -1,151 +1,111 @@
 package com.iacovelli.moviesapp.tvshowlist
 
-import android.view.View
-import com.iacovelli.moviesapp.FakeCache
-import com.iacovelli.moviesapp.ReadFixture
+import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.iacovelli.moviesapp.RxOverridingRule
-import com.iacovelli.moviesapp.common.configuration.Cache
+import com.iacovelli.moviesapp.common.ScreenStatus
 import com.iacovelli.moviesapp.common.configuration.FetchConfiguration
 import com.iacovelli.moviesapp.common.configuration.GetCachedConfiguration
-import com.iacovelli.moviesapp.common.io.MoviesRetrofit
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.verify
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.Assert
+import com.iacovelli.moviesapp.models.SimpleConfiguration
+import com.iacovelli.moviesapp.models.TvShowResponse
+import com.nhaarman.mockito_kotlin.*
+import io.reactivex.Single
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
+import java.io.IOException
 
 @RunWith(MockitoJUnitRunner::class)
 class TvShowListViewModelTest {
 
-    private val contract: TvShowListContract = mock()
-    private val defaultCache = FakeCache(true)
+    private val getTvShowList: GetTvShowList = mock()
+    private val fetchConfiguration: FetchConfiguration = mock()
+    private val getCachedConfiguration: GetCachedConfiguration = mock()
+    private val tvShowResponse: TvShowResponse = mock()
+    private val simpleConfiguration: SimpleConfiguration = mock()
 
     @get:Rule
-    val rxOverridingRule = RxOverridingRule()
+    val rule = RuleChain
+            .outerRule(InstantTaskExecutorRule())
+            .around(RxOverridingRule())
 
-    @Test
-    fun testGetConfigurationCachedAndPopularTvShowsSuccessfully() {
-        val webServer = MockWebServer()
-        MoviesRetrofit.BASE_URL = webServer.url("").toString()
-        val fixture = ReadFixture().execute("PopularTvShows.json")
-        webServer.enqueue(MockResponse().setBody(fixture))
-
-        val presenter = instantiatePresenter(FakeCache(true))
-
-        val request = webServer.takeRequest()
-        if (request.requestUrl.queryParameter("api_key").isNullOrBlank()) {
-            Assert.fail("missing api_key")
-        }
-        if (request.path.contains("configuration")) {
-            Assert.fail()
-        }
-        assertEquals("1", request.requestUrl.queryParameter("page"))
-
-        verify(contract).setupList(any())
-        verify(contract, never()).showMessage(any())
-        webServer.shutdown()
+    @Before
+    fun before() {
+        given(getCachedConfiguration.execute()).willReturn(simpleConfiguration)
+        given(getTvShowList.execute(1)).willReturn(Single.just(tvShowResponse))
+        given(tvShowResponse.page).willReturn(1)
     }
 
     @Test
-    fun testGetConfigurationNoCache() {
-        val webServer = MockWebServer()
-        MoviesRetrofit.BASE_URL = webServer.url("").toString()
-        val configFixture = ReadFixture().execute("Configuration.json")
-        webServer.enqueue(MockResponse().setBody(configFixture))
+    fun init_GetConfigurationFromCacheAndTvShowListSuccessfully() {
+        given(getCachedConfiguration.execute()).willReturn(simpleConfiguration)
 
-        val tvShowsFixture = ReadFixture().execute("PopularTvShows.json")
-        webServer.enqueue(MockResponse().setBody(tvShowsFixture))
+        val viewModel = withViewModel()
+        assertEquals(tvShowResponse, viewModel.tvShowResponse.value)
 
-        val presenter = instantiatePresenter(FakeCache(false))
-
-        val configurationRequest = webServer.takeRequest()
-        if (configurationRequest.path.contains("tv")) {
-            Assert.fail()
-        }
-
-        val tvRequestPage1 = webServer.takeRequest()
-
-        webServer.enqueue(MockResponse().setBody(tvShowsFixture))
-        presenter.fetchNextPage()
-                .subscribe({},{ fail()})
-
-        val tvRequestPage2 = webServer.takeRequest()
-        if (tvRequestPage2.path.contains("configuration")) {
-            Assert.fail()
-        }
-
-        verify(contract).setupList(any())
-        verify(contract, never()).showMessage(any())
-        webServer.shutdown()
+        verify(getCachedConfiguration).execute()
+        verify(fetchConfiguration, never()).execute()
+        verify(getTvShowList, only()).execute(1)
     }
 
     @Test
-    fun testFetchNextPagesOnPagination() {
-        val webServer = MockWebServer()
-        MoviesRetrofit.BASE_URL = webServer.url("").toString()
-        val fixturePage1 = ReadFixture().execute("PopularTvShows.json")
-        webServer.enqueue(MockResponse().setBody(fixturePage1))
+    fun init_GetConfigurationNoCacheAndTvShowListSuccessfully() {
+        given(getCachedConfiguration.execute()).willReturn(null)
+        given(fetchConfiguration.execute()).willReturn(Single.just(simpleConfiguration))
 
-        val fixturePage2 = ReadFixture().execute("PopularTvShows.json")
-        webServer.enqueue(MockResponse().setBody(fixturePage2))
+        val viewModel = withViewModel()
 
-        val presenter = instantiatePresenter(FakeCache(true))
-        presenter.fetchNextPage()
-                .subscribe({}, { fail() })
-
-        val request1 = webServer.takeRequest()
-        assertEquals("1", request1.requestUrl.queryParameter("page"))
-
-        val request2 = webServer.takeRequest()
-        assertEquals("2", request2.requestUrl.queryParameter("page"))
-
-        verify(contract).setupList(any())
-        verify(contract).addResults(any())
-        verify(contract, never()).showMessage(any())
-        webServer.shutdown()
+        assertEquals(tvShowResponse, viewModel.tvShowResponse.value)
+        verify(getCachedConfiguration).execute()
+        verify(fetchConfiguration, only()).execute()
+        verify(getTvShowList, only()).execute(1)
     }
 
     @Test
-    fun testIssueWhileFetchingConfiguration() {
-        val webServer = MockWebServer()
-        MoviesRetrofit.BASE_URL = webServer.url("").toString()
-        webServer.enqueue(MockResponse().setResponseCode(400))
+    fun fetchNextPage_BringsResultSuccessfully() {
+        given(getCachedConfiguration.execute()).willReturn(null)
+        given(fetchConfiguration.execute()).willReturn(Single.just(simpleConfiguration))
 
-        val presenter = instantiatePresenter(FakeCache(false))
+        val viewModel = withViewModel()
 
-        assertEquals(View.VISIBLE, presenter.loadingPresenter.tryAgainVisibility)
-        verify(contract, never()).setupList(any())
-        verify(contract).showMessage(any())
-        webServer.shutdown()
+        val secondPageResults: TvShowResponse = mock()
+        given(getTvShowList.execute(2)).willReturn(Single.just(secondPageResults))
+
+        viewModel.fetchNextPage().subscribe({}, { fail() })
+
+        assertEquals(secondPageResults, viewModel.tvShowResponse.value)
+
+        verify(getCachedConfiguration).execute()
+        verify(fetchConfiguration, only()).execute()
+        verify(getTvShowList, times(1)).execute(1)
+        verify(getTvShowList, times(1)).execute(2)
     }
 
     @Test
-    fun testIssueWhileFetchingTvShowList() {
-        val webServer = MockWebServer()
-        MoviesRetrofit.BASE_URL = webServer.url("").toString()
-        webServer.enqueue(MockResponse().setResponseCode(400))
+    fun init_ErrorWhileFetchingConfiguration() {
+        given(getCachedConfiguration.execute()).willReturn(null)
+        given(fetchConfiguration.execute()).willReturn(Single.error(IOException()))
 
-        val presenter = instantiatePresenter(FakeCache(true))
+        val viewModel = withViewModel()
+        assertEquals(ScreenStatus.Status.TRY_AGAIN, viewModel.screenStatus.value?.status)
+        assertEquals(null, viewModel.tvShowResponse.value)
 
-        assertEquals(View.VISIBLE, presenter.loadingPresenter.tryAgainVisibility)
-        verify(contract, never()).setupList(any())
-        verify(contract).showMessage(any())
-        webServer.shutdown()
+        verify(fetchConfiguration, only()).execute()
+        verify(getTvShowList, never()).execute(any())
     }
 
-    private fun instantiatePresenter(cache: Cache = defaultCache): TvShowListViewModel {
-        return TvShowListViewModel(
-                contract = contract,
-                fetchConfiguration = FetchConfiguration(cache),
-                getCachedConfiguration = GetCachedConfiguration(cache))
+    @Test
+    fun init_ErrorWhileFetchingTvShowList() {
+        given(getTvShowList.execute(1)).willReturn(Single.error(IOException()))
+        val viewModel = withViewModel()
+
+        assertEquals(ScreenStatus.Status.TRY_AGAIN, viewModel.screenStatus.value?.status)
+        assertEquals(null, viewModel.tvShowResponse.value)
     }
 
+    private fun withViewModel() = TvShowListViewModel(getTvShowList, fetchConfiguration, getCachedConfiguration)
 }

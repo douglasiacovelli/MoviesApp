@@ -22,7 +22,6 @@ class TvShowListViewModel (
 ): BaseViewModel() {
 
     private var configuration: SimpleConfiguration? = null
-    private var currentPage = 1
     private var loadingNextResults = false
 
     val tvShowResponse = MutableLiveData<TvShowResponse>()
@@ -46,11 +45,10 @@ class TvShowListViewModel (
 
     fun fetchNextPage(): Observable<TvShowResponse> {
         loadingNextResults = true
-        return getTvShowList.execute(currentPage + 1)
+        return getTvShowList.execute(tvShowResponse.value?.page?.plus(1) ?: 1)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
                     tvShowResponse.value = it
-                    currentPage = it.page
                 }
                 .doAfterTerminate {
                     loadingNextResults = false
@@ -71,13 +69,12 @@ class TvShowListViewModel (
         val disposable = configurationPipeline
                 .subscribeOn(Schedulers.io())
                 .flatMap {
-                    getTvShowList.execute(currentPage)
+                    getTvShowList.execute(1)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     setOk()
                     tvShowResponse.value = it
-                    currentPage = it.page
                 }, {
                     setTryAgain(it)
                 })

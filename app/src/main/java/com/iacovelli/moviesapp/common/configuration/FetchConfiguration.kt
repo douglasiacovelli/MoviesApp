@@ -5,10 +5,12 @@ import com.iacovelli.moviesapp.models.SimpleConfiguration
 import io.reactivex.Single
 
 class FetchConfiguration(
-        private val cache: Cache
+        private val cache: Cache,
+        private val configurationService: ConfigurationService =
+                MoviesRetrofit.instance.create(ConfigurationService::class.java)
 ) {
     fun execute(): Single<SimpleConfiguration> {
-        return MoviesRetrofit.instance.create(ConfigurationService::class.java)
+        return  configurationService
                 .getConfiguration()
                 .map {
                     val baseUrl = it.images.secureBaseUrl

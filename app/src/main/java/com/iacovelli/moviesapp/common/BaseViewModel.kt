@@ -49,7 +49,11 @@ open class BaseViewModel: ViewModel() {
 
 }
 
-class ScreenStatus(val status: Status, val message: Int? = null) {
+class ScreenStatus(
+        val status: Status,
+        val message: Int? = null
+) {
+
     enum class Status {
         LOADING,
         TRY_AGAIN,

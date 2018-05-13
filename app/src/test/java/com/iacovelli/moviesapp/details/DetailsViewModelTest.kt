@@ -1,57 +1,48 @@
 package com.iacovelli.moviesapp.details
 
-import android.view.View
-import com.iacovelli.moviesapp.ReadFixture
+import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.iacovelli.moviesapp.RxOverridingRule
-import com.iacovelli.moviesapp.common.io.MoviesRetrofit
+import com.iacovelli.moviesapp.common.ItemTvShowFactory
+import com.iacovelli.moviesapp.common.ui.ItemTvShowPresenter
+import com.iacovelli.moviesapp.models.TvShow
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.anyOrNull
+import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.verify
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.Assert
+import io.reactivex.Single
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class DetailsViewModelTest {
 
-    private val contract: DetailsContract = mock()
     @get:Rule
-    val rxOverridingRule = RxOverridingRule()
+    val rule = RuleChain
+            .outerRule(InstantTaskExecutorRule())
+            .around(RxOverridingRule())
 
-    @Test
-    fun testGetTvShow() {
-        val mockWebServer = MockWebServer()
-        MoviesRetrofit.BASE_URL = mockWebServer.url("").toString()
+    private val getTvShow: GetTvShow = mock()
+    private val tvShow: TvShow = mock()
+    private val itemTvShowFactory: ItemTvShowFactory = mock()
+    private val itemTvShowPresenter: ItemTvShowPresenter = mock()
 
-        val fixture = ReadFixture().execute("TvShowDetails.json")
-
-        mockWebServer.enqueue(MockResponse().setBody(fixture))
-        val presenter = DetailsViewModel(contract, 9)
-
-        verify(contract).setupList(any())
-        Assert.assertNotNull(presenter.tvShowPresenter)
-        assertEquals(View.GONE, presenter.loadingPresenter.pageVisibility)
-        mockWebServer.shutdown()
+    @Before
+    fun before() {
+        given(itemTvShowFactory.create(any(), anyOrNull())).willReturn(itemTvShowPresenter)
     }
 
     @Test
-    fun testGetTvShowWith400Response() {
-        val mockWebServer = MockWebServer()
-        MoviesRetrofit.BASE_URL = mockWebServer.url("").toString()
+    fun init_GetTvShowSuccessfully() {
+        given(getTvShow.execute(9)).willReturn(Single.just(tvShow))
 
-        mockWebServer.enqueue(MockResponse().setResponseCode(400))
-        val presenter = DetailsViewModel(contract, 9)
+        val viewModel = DetailsViewModel(9, getTvShow, itemTvShowFactory)
 
-        verify(contract, never()).setupList(any())
-        Assert.assertNull(presenter.tvShowPresenter)
-        assertEquals(View.VISIBLE, presenter.loadingPresenter.tryAgainVisibility)
-        mockWebServer.shutdown()
+        assertEquals(itemTvShowPresenter, viewModel.tvShow.value)
     }
 }
 
