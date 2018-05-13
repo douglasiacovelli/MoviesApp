@@ -5,7 +5,7 @@
 
     <data>
         <variable name="presenter"
-            type="com.iacovelli.moviesapp.details.DetailsPresenter"/>
+            type="com.iacovelli.moviesapp.details.DetailsViewModel"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -45,14 +45,13 @@
                         android:background="@drawable/overlay"
                         android:alpha="1"
                         android:fitsSystemWindows="true"/>
-
                 </RelativeLayout>
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                    app:layout_collapseMode="none" />
+                    app:layout_collapseMode="pin" />
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
 
@@ -120,10 +119,10 @@
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
-        <ProgressBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="@{presenter.status.loadingVisibility}"/>
+        <include
+            layout="@layout/screen_status"
+            app:presenter="@{presenter}"
+            tools:visibility="gone" />
+
     </android.support.design.widget.CoordinatorLayout>
 </layout>

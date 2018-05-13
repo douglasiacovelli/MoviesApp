@@ -18,7 +18,7 @@ import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-class DetailsPresenterTest {
+class DetailsViewModelTest {
 
     private val contract: DetailsContract = mock()
     @get:Rule
@@ -32,7 +32,7 @@ class DetailsPresenterTest {
         val fixture = ReadFixture().execute("TvShowDetails.json")
 
         mockWebServer.enqueue(MockResponse().setBody(fixture))
-        val presenter = DetailsPresenter(contract, 9)
+        val presenter = DetailsViewModel(contract, 9)
 
         verify(contract).setupList(any())
         Assert.assertNotNull(presenter.tvShowPresenter)
@@ -46,7 +46,7 @@ class DetailsPresenterTest {
         MoviesRetrofit.BASE_URL = mockWebServer.url("").toString()
 
         mockWebServer.enqueue(MockResponse().setResponseCode(400))
-        val presenter = DetailsPresenter(contract, 9)
+        val presenter = DetailsViewModel(contract, 9)
 
         verify(contract, never()).setupList(any())
         Assert.assertNull(presenter.tvShowPresenter)

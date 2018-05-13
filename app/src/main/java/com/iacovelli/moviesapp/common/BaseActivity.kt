@@ -1,22 +1,22 @@
 package com.iacovelli.moviesapp.common
 
-import android.content.Context
+import android.arch.lifecycle.Observer
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 
-abstract class BaseActivity: AppCompatActivity(), BaseContract {
-    var presenter: BasePresenter? = null
+open class BaseActivity<T: BaseViewModel>: AppCompatActivity() {
 
-    override fun onDestroy() {
-        super.onDestroy()
-        presenter?.onDestroy()
+    lateinit var viewModel: T
+
+    fun observeScreenStatus() {
+        viewModel.screenStatus.observe(this, Observer {
+            it?.message?.let {
+                showToast(it)
+            }
+        })
     }
 
-    override fun getContext(): Context {
-        return this
-    }
-
-    override fun showMessage(resId: Int) {
-        Toast.makeText(this, resId, Toast.LENGTH_LONG).show()
+    private fun showToast(message: Int, length: Int = Toast.LENGTH_LONG) {
+        Toast.makeText(this, message, length).show()
     }
 }

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="presenter"
-            type="com.iacovelli.moviesapp.common.ui.LoadingPresenter"/>
+            type="com.iacovelli.moviesapp.common.BaseViewModel"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -14,14 +14,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:visibility="@{presenter.pageVisibility}"
+        android:visibility="@{presenter.screenStatus.pageVisibility}"
         android:padding="@dimen/normalSize">
 
         <ProgressBar
             android:id="@+id/loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{presenter.loadingVisibility}"
+            android:visibility="@{presenter.screenStatus.loadingVisibility}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
             android:text="@string/try_again_message"
             android:layout_centerInParent="true"
             android:textAlignment="center"
-            android:visibility="@{presenter.tryAgainVisibility}"
+            android:visibility="@{presenter.screenStatus.tryAgainVisibility}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +48,7 @@
             android:text="@string/try_again"
             android:background="?attr/selectableItemBackground"
             android:padding="@dimen/normalSize"
-            android:visibility="@{presenter.tryAgainVisibility}"
+            android:visibility="@{presenter.screenStatus.tryAgainVisibility}"
             android:onClick="@{(v) -> presenter.onClickTryAgain()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,6 +1,10 @@
 package com.iacovelli.moviesapp.tvshowlist
 
-import com.iacovelli.moviesapp.common.BasePresenter
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import android.content.Context
+import com.iacovelli.moviesapp.common.BaseViewModel
 import com.iacovelli.moviesapp.common.configuration.FetchConfiguration
 import com.iacovelli.moviesapp.common.configuration.GetCachedConfiguration
 import com.iacovelli.moviesapp.common.configuration.SharedPreference
@@ -11,30 +15,28 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class TvShowListPresenter(
-        private val contract: TvShowListContract,
+class TvShowListViewModel (
         private val getTvShowList: GetTvShowList = GetTvShowList(),
-        private val fetchConfiguration: FetchConfiguration =
-                FetchConfiguration(SharedPreference(contract.getContext())),
-        private val getCachedConfiguration: GetCachedConfiguration =
-                GetCachedConfiguration(SharedPreference(contract.getContext()))
-): BasePresenter(contract) {
+        private val fetchConfiguration: FetchConfiguration,
+        private val getCachedConfiguration: GetCachedConfiguration
+): BaseViewModel() {
 
     private var configuration: SimpleConfiguration? = null
-    private var tvShowResponse: TvShowResponse? = null
     private var currentPage = 1
-    var loadingNextResults = false
+    private var loadingNextResults = false
+
+    val tvShowResponse = MutableLiveData<TvShowResponse>()
 
     init {
         fetchData()
     }
 
-    override fun tryAgain() {
+    override fun onClickTryAgain() {
         fetchData()
     }
 
     fun shouldFetchNextPage(position: Int, loadedItemsCount: Int): Boolean {
-        tvShowResponse?.let {
+        tvShowResponse.value?.let {
             return !loadingNextResults
                     && position >= loadedItemsCount - 4
                     && it.isNextPageAvailable()
@@ -45,10 +47,10 @@ class TvShowListPresenter(
     fun fetchNextPage(): Observable<TvShowResponse> {
         loadingNextResults = true
         return getTvShowList.execute(currentPage + 1)
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
-                    tvShowResponse = it
+                    tvShowResponse.value = it
                     currentPage = it.page
-                    contract.addResults(it.results)
                 }
                 .doAfterTerminate {
                     loadingNextResults = false
@@ -57,7 +59,7 @@ class TvShowListPresenter(
     }
 
     private fun fetchData() {
-        setLoading(true)
+        setLoading()
         configuration = getCachedConfiguration.execute()
 
         val configurationPipeline = if (configuration == null) {
@@ -73,16 +75,14 @@ class TvShowListPresenter(
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    setLoading(false)
-                    tvShowResponse = it
+                    setOk()
+                    tvShowResponse.value = it
                     currentPage = it.page
-                    contract.setupList(it.results)
                 }, {
-                    showTryAgain()
-                    handleError(it)
+                    setTryAgain(it)
                 })
 
-        compositeDisposable.add(disposable)
+        addToDisposables(disposable)
     }
 
     private fun fetchConfigurationFromTheServer(): Single<SimpleConfiguration> {
@@ -90,5 +90,16 @@ class TvShowListPresenter(
                 .doOnSuccess {
                     configuration = it
                 }
+    }
+
+    class Factory(val context: Context): ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+
+            val sharedPreferences = SharedPreference(context)
+            return TvShowListViewModel(
+                    GetTvShowList(),
+                    FetchConfiguration(sharedPreferences),
+                    GetCachedConfiguration(sharedPreferences)) as T
+        }
     }
 }

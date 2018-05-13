@@ -7,12 +7,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.iacovelli.moviesapp.BR
 import com.iacovelli.moviesapp.R
-import com.iacovelli.moviesapp.common.OpenTvShowContract
 import com.iacovelli.moviesapp.models.TvShow
 
 class TvShowListAdapter(
-        private val contract: OpenTvShowContract,
-        private val data: ArrayList<TvShow>,
+        private val callback: (tvShow: TvShow) -> Unit,
+        private val data: ArrayList<TvShow> = arrayListOf(),
         private val view: Int = R.layout.item_tv_show
 ): RecyclerView.Adapter<TvShowListAdapter.TvShowViewHolder>() {
 
@@ -27,29 +26,15 @@ class TvShowListAdapter(
 
     override fun onBindViewHolder(holder: TvShowViewHolder, position: Int) {
         val tvShow = data[position]
-        val presenter = ItemTvShowPresenter(contract, tvShow)
+        val presenter = ItemTvShowPresenter(tvShow, callback)
         holder.dataBinding.setVariable(BR.presenter, presenter)
     }
 
-    override fun onViewRecycled(holder: TvShowViewHolder) {
-        super.onViewRecycled(holder)
-        holder.clear()
-    }
-
-    fun addNextResults(tvShowResults: List<TvShow>) {
+    fun addResults(tvShowResults: List<TvShow>) {
         val lastPosition = data.size
         data.addAll(tvShowResults)
         notifyItemRangeInserted(lastPosition, tvShowResults.size)
     }
 
-    class TvShowViewHolder(val dataBinding: ViewDataBinding):
-            RecyclerView.ViewHolder(dataBinding.root) {
-
-        var presenter: ItemTvShowPresenter? = null
-
-        fun clear() {
-            presenter?.onDestroy()
-            presenter = null
-        }
-    }
+    class TvShowViewHolder(val dataBinding: ViewDataBinding): RecyclerView.ViewHolder(dataBinding.root)
 }

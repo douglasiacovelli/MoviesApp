@@ -7,60 +7,31 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.MenuItem
 import com.iacovelli.moviesapp.R
 import com.iacovelli.moviesapp.common.BaseActivity
-import com.iacovelli.moviesapp.common.OpenTvShowContract
 import com.iacovelli.moviesapp.common.ui.TvShowListAdapter
 import com.iacovelli.moviesapp.databinding.ActivityDetailsBinding
 import com.iacovelli.moviesapp.models.TvShow
 
-class DetailsActivity: BaseActivity(), DetailsContract, OpenTvShowContract {
+class DetailsActivity: BaseActivity<DetailsViewModel>() {
     lateinit var dataBinding: ActivityDetailsBinding
-    lateinit var viewModel: DetailsPresenter
+    private val callback = { tvShow: TvShow ->
+        openTvShow(tvShow)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_details)
         val tvShowId = intent.getIntExtra(TV_SHOW_ID, 0)
-        val factory = DetailsPresenter.Factory(tvShowId)
+        val factory = DetailsViewModel.Factory(tvShowId)
 
-        viewModel = ViewModelProviders.of(this, factory).get(DetailsPresenter::class.java)
+        viewModel = ViewModelProviders.of(this, factory).get(DetailsViewModel::class.java)
         dataBinding.presenter = viewModel
         dataBinding.setLifecycleOwner(this)
 
-        setupViewModelObservers()
+        setupUI()
         setupToolbar()
-    }
-
-    private fun setupViewModelObservers() {
-        viewModel.status.observe(this, Observer {
-            Log.d("debug", "teste ${it?.message}")
-            it?.message?.let {
-                showMessage(it)
-            }
-        })
-
-        viewModel.tvShow.observe(this, Observer {
-            setupList(it?.similar ?: arrayListOf())
-        })
-    }
-
-    private fun setupToolbar() {
-        setSupportActionBar(dataBinding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-    }
-
-    override fun setupList(tvShowList: ArrayList<TvShow>) {
-        val recyclerView = dataBinding.similarList
-        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.adapter = TvShowListAdapter(this, tvShowList, R.layout.item_similar_tv_show)
-    }
-
-    override fun openTvShow(id: Int) {
-        startActivity(DetailsActivity.buildIntent(this, id))
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -69,6 +40,34 @@ class DetailsActivity: BaseActivity(), DetailsContract, OpenTvShowContract {
             return false
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun setupUI() {
+        viewModel.tvShow.observe(this, Observer {
+            updateList(it?.similar ?: arrayListOf())
+        })
+        observeScreenStatus()
+        setupSimilarList()
+    }
+
+    private fun updateList(arrayList: ArrayList<TvShow>) {
+        (dataBinding.similarList.adapter as TvShowListAdapter).addResults(arrayList)
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(dataBinding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+    }
+
+    private fun setupSimilarList() {
+        val recyclerView = dataBinding.similarList
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.adapter = TvShowListAdapter(callback, view = R.layout.item_similar_tv_show)
+    }
+
+    private fun openTvShow(tvShow: TvShow) {
+        startActivity(DetailsActivity.buildIntent(this, tvShow.id))
     }
 
     companion object {

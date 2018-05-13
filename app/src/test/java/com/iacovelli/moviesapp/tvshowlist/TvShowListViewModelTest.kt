@@ -23,7 +23,7 @@ import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-class TvShowListPresenterTest {
+class TvShowListViewModelTest {
 
     private val contract: TvShowListContract = mock()
     private val defaultCache = FakeCache(true)
@@ -141,8 +141,8 @@ class TvShowListPresenterTest {
         webServer.shutdown()
     }
 
-    private fun instantiatePresenter(cache: Cache = defaultCache): TvShowListPresenter {
-        return TvShowListPresenter(
+    private fun instantiatePresenter(cache: Cache = defaultCache): TvShowListViewModel {
+        return TvShowListViewModel(
                 contract = contract,
                 fetchConfiguration = FetchConfiguration(cache),
                 getCachedConfiguration = GetCachedConfiguration(cache))

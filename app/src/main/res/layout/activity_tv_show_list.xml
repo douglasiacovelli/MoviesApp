@@ -6,13 +6,13 @@
     <data>
         <variable
             name="presenter"
-            type="com.iacovelli.moviesapp.tvshowlist.TvShowListPresenter"/>
+            type="com.iacovelli.moviesapp.tvshowlist.TvShowListViewModel"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".tvshowlist.TvShowContractListActivity">
+        tools:context=".tvshowlist.TvShowListActivity">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -36,8 +36,8 @@
             tools:listitem="@layout/item_tv_show"/>
 
         <include
-            layout="@layout/loading"
-            app:presenter="@{presenter.loadingPresenter}"
+            layout="@layout/screen_status"
+            app:presenter="@{presenter}"
             tools:visibility="gone" />
     </android.support.design.widget.CoordinatorLayout>
 </layout>

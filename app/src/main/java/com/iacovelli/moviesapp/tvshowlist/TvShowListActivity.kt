@@ -1,5 +1,7 @@
 package com.iacovelli.moviesapp.tvshowlist
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -9,49 +11,52 @@ import com.iacovelli.moviesapp.common.ui.TvShowListAdapter
 import com.iacovelli.moviesapp.databinding.ActivityTvShowListBinding
 import com.iacovelli.moviesapp.details.DetailsActivity
 import com.iacovelli.moviesapp.models.TvShow
+import com.iacovelli.moviesapp.models.TvShowResponse
 import com.jakewharton.rxbinding2.support.v7.widget.RxRecyclerView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_tv_show_list.*
 
-class TvShowContractListActivity : BaseActivity(), TvShowListContract {
-    lateinit var dataBinding: ActivityTvShowListBinding
+class TvShowListActivity : BaseActivity<TvShowListViewModel>() {
+    private lateinit var dataBinding: ActivityTvShowListBinding
     private val compositeDisposable = CompositeDisposable()
+    private val callback = { tvShow: TvShow ->
+        openTvShow(tvShow)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_tv_show_list)
-        presenter = TvShowListPresenter(this)
+        dataBinding.setLifecycleOwner(this)
 
-        dataBinding.presenter = presenter as TvShowListPresenter
-        setSupportActionBar(toolbar)
+        val factory = TvShowListViewModel.Factory(this.applicationContext)
+        viewModel = ViewModelProviders.of(this, factory).get(TvShowListViewModel::class.java)
+        dataBinding.presenter = viewModel
+
+        setupUI()
+        setSupportActionBar(dataBinding.toolbar)
     }
 
-    override fun setupList(tvShowList: ArrayList<TvShow>) {
+    private fun setupList() {
         val recyclerView = dataBinding.list
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = TvShowListAdapter(this, tvShowList)
+        recyclerView.adapter = TvShowListAdapter(callback)
         setupPagination()
     }
 
-    override fun openTvShow(id: Int) {
-        startActivity(DetailsActivity.buildIntent(this, id))
+    private fun openTvShow(tvShow: TvShow) {
+        startActivity(DetailsActivity.buildIntent(this, tvShow.id))
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         compositeDisposable.clear()
+        super.onDestroy()
     }
 
     override fun onResume() {
         super.onResume()
         setupPagination()
-    }
-
-    override fun addResults(results: ArrayList<TvShow>) {
-        (dataBinding.list.adapter as TvShowListAdapter).addNextResults(results)
     }
 
     private fun setupPagination() {
@@ -64,19 +69,33 @@ class TvShowContractListActivity : BaseActivity(), TvShowListContract {
                     .distinctUntilChanged()
                     .filter {
                         val itemCount = (dataBinding.list.adapter as TvShowListAdapter).itemCount
-                        (presenter as? TvShowListPresenter)?.shouldFetchNextPage(it, itemCount) == true
+                        viewModel.shouldFetchNextPage(it, itemCount)
                     }
                     .observeOn(Schedulers.io())
                     .flatMap {
-                        (presenter as TvShowListPresenter).fetchNextPage()
+                        viewModel.fetchNextPage()
                     }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                     }, {
-                        presenter?.handleError(it)
+                        viewModel.setTryAgain(it)
                     })
 
             compositeDisposable.add(disposable)
+        }
+    }
+
+    private fun setupUI() {
+        viewModel.tvShowResponse.observe(this, Observer {
+            addResultsToTheList(it)
+        })
+        observeScreenStatus()
+        setupList()
+    }
+
+    private fun addResultsToTheList(tvShowResponse: TvShowResponse?) {
+        tvShowResponse?.let {
+            (dataBinding.list.adapter as TvShowListAdapter).addResults(it.results)
         }
     }
 
